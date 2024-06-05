@@ -6,55 +6,123 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>Document</title>
+    <style>
+        .error { color: red; font-size: 0.8em; }
+    </style>
 </head>
 <body>
     <div class="container">
         <div style="text-align:center">
-          <h2>Contact Us</h2>
-          <p>Swing by for a cup of coffee, or leave us a message:</p>
+            <h2>Contact Us</h2>
+            <p>Swing by for a cup of coffee, or leave us a message:</p>
         </div>
         <div class="row">
-          
-          <div class="column">
-            <form id="submit-form" action="">
-              <label for="fname">First Name</label>
-              <input type="text" id="fname" name="name" placeholder="Your name..">
-              <label for="lname">Email</label>
-              <input type="text" id="lname" name="email" placeholder="Your last name..">
-              <label for="country">Country</label>
-              <select id="country" name="color">
-                <option value="australia">Australia</option>
-                <option value="canada">Canada</option>
-                <option value="usa">USA</option>
-              </select>
-              <label for="subject">Subject</label>
-              <textarea id="subject" name="message" placeholder="Write something.." style="height:170px"></textarea>
-              <input type="submit" value="Submit">
-            </form>
-          </div>
-          <div class="column">
-            <img src="crossroads.png" style="width:100%">
-          </div>
+            <div class="column">
+                <form id="submit-form" action="">
+                    <label for="fname">First Name <span style="color:red;">*</span></label>
+                    <input type="text" id="fname" name="name" placeholder="Your name..">
+                    <span id="fnameError" class="error"></span><br /><br />
+
+                    <label for="email">Email <span style="color:red;">*</span></label>
+                    <input type="text" id="email" name="email" placeholder="Your email..">
+                    <span id="emailError" class="error"></span><br /><br />
+
+                    <label for="country">Country <span style="color:red;">*</span></label>
+                    <select id="country" name="color">
+                        <option value="">Select Country</option>
+                        <option value="australia">Australia</option>
+                        <option value="canada">Canada</option>
+                        <option value="usa">USA</option>
+                    </select>
+                    <span id="countryError" class="error"></span><br /><br />
+
+                    <label for="subject">Subject <span style="color:red;">*</span></label>
+                    <textarea id="subject" name="message" placeholder="Write something.." style="height:170px"></textarea>
+                    <span id="subjectError" class="error"></span><br /><br />
+
+                    <input type="submit" value="Submit">
+                </form>
+            </div>
+            <div class="column">
+                <img src="crossroads.png" style="width:100%">
+            </div>
         </div>
-      </div>
-      <script>
-        $("#submit-form").submit((e)=>{
-            e.preventDefault()
-            $.ajax({
-                url:"",
-                data:$("#submit-form").serialize(),
-                method:"post",
-                success:function (response){
-                    alert("Form submitted successfully")
-                    window.location.reload()
-                    //window.location.href="https://google.com"
-                },
-                error:function (err){
-                    alert("Something Error")
-    
-                }
-            })
-        })
+    </div>
+
+    <script>
+        function validateForm() {
+            let isValid = true;
+            
+          // First Name validation
+            let fname = $("#fname").val();
+            let nameRegex = /^[a-zA-Z\s'-]+$/;  // Allows letters, spaces, hyphens, and apostrophes
+
+            if (fname === "") {
+                $("#fnameError").text("Required");
+                isValid = false;
+            } else if (!nameRegex.test(fname)) {
+                $("#fnameError").text("Invalid Format");
+                isValid = false;
+            } else {
+                $("#fnameError").text("");
+            }
+            
+            // Email validation
+            let email = $("#email").val();
+            let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (email === "") {
+                $("#emailError").text("Required");
+                isValid = false;
+            } else if (!emailRegex.test(email)) {
+                $("#emailError").text("Invalid email format");
+                isValid = false;
+            } else {
+                $("#emailError").text("");
+            }
+            
+            // Country validation
+            let country = $("#country").val();
+            if (country === "") {
+                $("#countryError").text("Please select a country");
+                isValid = false;
+            } else {
+                $("#countryError").text("");
+            }
+            
+            // Subject validation
+            let subject = $("#subject").val();
+            if (subject === "") {
+                $("#subjectError").text("Subject is required");
+                isValid = false;
+            } else if (subject.length < 10) {
+                $("#subjectError").text("Subject must be at least 10 characters");
+                isValid = false;
+            } else {
+                $("#subjectError").text("");
+            }
+            
+            return isValid;
+        }
+
+        $("#submit-form").submit((e) => {
+            e.preventDefault();
+            
+            if (validateForm()) {
+                $.ajax({
+                    url: "",
+                    data: $("#submit-form").serialize(),
+                    method: "post",
+                    success: function (response) {
+                        alert("Form submitted successfully");
+                        window.location.reload();
+                        //window.location.href="https://google.com"
+                    },
+                    error: function (err) {
+                        alert("Something Error");
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>
